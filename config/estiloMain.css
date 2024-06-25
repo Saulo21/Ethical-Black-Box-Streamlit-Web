@@ -1,0 +1,30 @@
+<style>
+    button[title="View fullscreen"] {
+        visibility: hidden;
+    }
+
+    .block-container {
+        padding-top: 5rem;
+        padding-bottom: 0rem;
+    }
+
+    div[class="block-container css-ysnqb2 ea3mdgi4"] {
+        padding-top: 0rem;
+    }
+
+    div[class="css-vmtpwk eczjsme4"] {
+        padding-bottom: 0rem;
+    }
+
+    section[data-testid="stSidebar"] {
+        width: 500px; /* Falta el punto y coma aquí */
+    }
+
+    ul[class="css-1oe5cao eczjsme9"] {
+        padding-top: 3rem;
+    }
+
+    .icon {
+        font-size: 50px;
+    }
+</style>
