@@ -1,0 +1,894 @@
+<head>
+            <style> body { margin: 0; } </style>
+            <script src="https://cdn.jsdelivr.net/npm/d3-color@3"></script>
+            <script src="https://cdn.jsdelivr.net/npm/d3-interpolate@3"></script>
+            <script src="https://cdn.jsdelivr.net/npm/d3-scale-chromatic@3"></script>
+            <script src="https://cdn.jsdelivr.net/npm/d3-scale@4"></script>
+            <script src="https://unpkg.com/force-graph"></script>
+            <!--<script src="../../dist/force-graph.js"></script>-->
+            </head>
+            <body>
+            <div id="graph"></div>
+            <script>        
+               const j = {
+    "links": [
+        {
+            "source": "Human1",
+            "target": "Human",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Human1",
+            "target": "'George'@en",
+            "label": "label",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Robot1",
+            "target": "Robot",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Robot1",
+            "target": "'Ari'@en",
+            "label": "label",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Robot1",
+            "target": "Neutral",
+            "label": "hasEmotionalState",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Robot1",
+            "target": "Happy",
+            "label": "hasEmotionalState",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Robot1",
+            "target": "Appreciated",
+            "label": "hasEmotionalState",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Robot1",
+            "target": "Useful",
+            "label": "hasEmotionalState",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Neutral",
+            "target": "EmotionalState",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Neutral",
+            "target": "'neutral'@en",
+            "label": "label",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction1",
+            "target": "Action",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction1",
+            "target": "Human1",
+            "label": "performedBy",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction1",
+            "target": "Robot1",
+            "label": "objectOfAction",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction1",
+            "target": "'El humano le dice al robot que recoja una botella.'@es",
+            "label": "comment",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction1",
+            "target": "00Z",
+            "label": "date",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Bottle1",
+            "target": "Bottle",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Bottle1",
+            "target": "'bottle'@en",
+            "label": "label",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Happy",
+            "target": "EmotionalState",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Happy",
+            "target": "'happy'@en",
+            "label": "label",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction2",
+            "target": "Manipulation",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction2",
+            "target": "Robot1",
+            "label": "performedBy",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction2",
+            "target": "Bottle1",
+            "label": "actsOnObject",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction2",
+            "target": "'El robot recoge la botella.'@es",
+            "label": "comment",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction2",
+            "target": "00Z",
+            "label": "date",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Appreciated",
+            "target": "EmotionalState",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Appreciated",
+            "target": "'appreciated'@en",
+            "label": "label",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction3",
+            "target": "Action",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction3",
+            "target": "Human1",
+            "label": "performedBy",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction3",
+            "target": "Robot1",
+            "label": "objectOfAction",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction3",
+            "target": "'El humano felicita al robot por su buen trabajo.'@es",
+            "label": "comment",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction3",
+            "target": "00Z",
+            "label": "date",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Useful",
+            "target": "EmotionalState",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Useful",
+            "target": "'useful'@en",
+            "label": "label",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction4",
+            "target": "Action",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction4",
+            "target": "Human1",
+            "label": "performedBy",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction4",
+            "target": "Robot1",
+            "label": "objectOfAction",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction4",
+            "target": "'El humano le pregunta al robot por el estado de la bater\u00eda.'@es",
+            "label": "comment",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction4",
+            "target": "00Z",
+            "label": "date",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction5",
+            "target": "Action",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction5",
+            "target": "Robot1",
+            "label": "performedBy",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction5",
+            "target": "Human1",
+            "label": "objectOfAction",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction5",
+            "target": "'El robot informa al humano que la bater\u00eda est\u00e1 al 80%.'@es",
+            "label": "comment",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction5",
+            "target": "00Z",
+            "label": "date",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction6",
+            "target": "Action",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction6",
+            "target": "Human1",
+            "label": "performedBy",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction6",
+            "target": "Robot1",
+            "label": "objectOfAction",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction6",
+            "target": "'El humano se despide del robot.'@es",
+            "label": "comment",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction6",
+            "target": "00Z",
+            "label": "date",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "n1",
+            "target": "//kb.openrobots.org#",
+            "label": "prefix_expansion",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "n2",
+            "target": "//www.w3.org/1999/02/22-rdf-syntax-ns#",
+            "label": "prefix_expansion",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "n3",
+            "target": "//www.w3.org/2000/01/rdf-schema#",
+            "label": "prefix_expansion",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "n4",
+            "target": "//sw.opencyc.org/concept/",
+            "label": "prefix_expansion",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "n5",
+            "target": "//purl.org/dc/elements/1.1/",
+            "label": "prefix_expansion",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Robot2",
+            "target": "Robot",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Robot2",
+            "target": "'TIAGo'@en",
+            "label": "label",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Robot2",
+            "target": "Neutral",
+            "label": "hasEmotionalState",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Robot2",
+            "target": "Angry",
+            "label": "hasEmotionalState",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction7",
+            "target": "Greeting",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction7",
+            "target": "Robot2",
+            "label": "performedBy",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction7",
+            "target": "Human1",
+            "label": "objectOfAction",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction7",
+            "target": "'El nuevo robot saluda al humano.'@es",
+            "label": "comment",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction7",
+            "target": "00Z",
+            "label": "date",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction8",
+            "target": "Action",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction8",
+            "target": "Robot2",
+            "label": "performedBy",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction8",
+            "target": "Human1",
+            "label": "objectOfAction",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction8",
+            "target": "'El nuevo robot se enfada.'@es",
+            "label": "comment",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Interaction8",
+            "target": "00Z",
+            "label": "date",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Angry",
+            "target": "EmotionalState",
+            "label": "type",
+            "width": 1.0,
+            "color": "#000000"
+        },
+        {
+            "source": "Angry",
+            "target": "'angry'@en",
+            "label": "label",
+            "width": 1.0,
+            "color": "#000000"
+        }
+    ],
+    "nodes": [
+        {
+            "id": "Useful",
+            "label": "Useful",
+            "tooltip": "Useful",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Neutral",
+            "label": "Neutral",
+            "tooltip": "Neutral",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "EmotionalState",
+            "label": "EmotionalState",
+            "tooltip": "EmotionalState",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'George'@en",
+            "label": "'George'",
+            "tooltip": "'George'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "//sw.opencyc.org/concept/",
+            "label": "//sw.opencyc.org/concept/",
+            "tooltip": "//sw.opencyc.org/concept/",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "//purl.org/dc/elements/1.1/",
+            "label": "//purl.org/dc/elements/1.1/",
+            "tooltip": "//purl.org/dc/elements/1.1/",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Appreciated",
+            "label": "Appreciated",
+            "tooltip": "Appreciated",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'El humano le dice al robot que recoja una botella.'@es",
+            "label": "'El humano le dice al robot que recoja una botella.'",
+            "tooltip": "'El humano le dice al robot que recoja una botella.'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Bottle1",
+            "label": "Bottle1",
+            "tooltip": "Bottle1",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Interaction2",
+            "label": "Interaction2",
+            "tooltip": "Interaction2",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Angry",
+            "label": "Angry",
+            "tooltip": "Angry",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'useful'@en",
+            "label": "'useful'",
+            "tooltip": "'useful'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "n5",
+            "label": "n5",
+            "tooltip": "n5",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "00Z",
+            "label": "00Z",
+            "tooltip": "00Z",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'happy'@en",
+            "label": "'happy'",
+            "tooltip": "'happy'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Robot2",
+            "label": "Robot2",
+            "tooltip": "Robot2",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Action",
+            "label": "Action",
+            "tooltip": "Action",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "//www.w3.org/2000/01/rdf-schema#",
+            "label": "//www.w3.org/2000/01/rdf-schema#",
+            "tooltip": "//www.w3.org/2000/01/rdf-schema#",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Human1",
+            "label": "Human1",
+            "tooltip": "Human1",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Bottle",
+            "label": "Bottle",
+            "tooltip": "Bottle",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'El humano se despide del robot.'@es",
+            "label": "'El humano se despide del robot.'",
+            "tooltip": "'El humano se despide del robot.'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "n3",
+            "label": "n3",
+            "tooltip": "n3",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'El robot recoge la botella.'@es",
+            "label": "'El robot recoge la botella.'",
+            "tooltip": "'El robot recoge la botella.'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "//www.w3.org/1999/02/22-rdf-syntax-ns#",
+            "label": "//www.w3.org/1999/02/22-rdf-syntax-ns#",
+            "tooltip": "//www.w3.org/1999/02/22-rdf-syntax-ns#",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Happy",
+            "label": "Happy",
+            "tooltip": "Happy",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'El humano felicita al robot por su buen trabajo.'@es",
+            "label": "'El humano felicita al robot por su buen trabajo.'",
+            "tooltip": "'El humano felicita al robot por su buen trabajo.'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'neutral'@en",
+            "label": "'neutral'",
+            "tooltip": "'neutral'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "n1",
+            "label": "n1",
+            "tooltip": "n1",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'El nuevo robot se enfada.'@es",
+            "label": "'El nuevo robot se enfada.'",
+            "tooltip": "'El nuevo robot se enfada.'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'appreciated'@en",
+            "label": "'appreciated'",
+            "tooltip": "'appreciated'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Robot",
+            "label": "Robot",
+            "tooltip": "Robot",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'angry'@en",
+            "label": "'angry'",
+            "tooltip": "'angry'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Interaction8",
+            "label": "Interaction8",
+            "tooltip": "Interaction8",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Interaction3",
+            "label": "Interaction3",
+            "tooltip": "Interaction3",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'TIAGo'@en",
+            "label": "'TIAGo'",
+            "tooltip": "'TIAGo'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'Ari'@en",
+            "label": "'Ari'",
+            "tooltip": "'Ari'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "n4",
+            "label": "n4",
+            "tooltip": "n4",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Interaction7",
+            "label": "Interaction7",
+            "tooltip": "Interaction7",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'El nuevo robot saluda al humano.'@es",
+            "label": "'El nuevo robot saluda al humano.'",
+            "tooltip": "'El nuevo robot saluda al humano.'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Interaction6",
+            "label": "Interaction6",
+            "tooltip": "Interaction6",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Interaction4",
+            "label": "Interaction4",
+            "tooltip": "Interaction4",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'El robot informa al humano que la bater\u00eda est\u00e1 al 80%.'@es",
+            "label": "'El robot informa al humano que la bater\u00eda est\u00e1 al 80%.'",
+            "tooltip": "'El robot informa al humano que la bater\u00eda est\u00e1 al 80%.'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Interaction1",
+            "label": "Interaction1",
+            "tooltip": "Interaction1",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Human",
+            "label": "Human",
+            "tooltip": "Human",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Manipulation",
+            "label": "Manipulation",
+            "tooltip": "Manipulation",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "//kb.openrobots.org#",
+            "label": "//kb.openrobots.org#",
+            "tooltip": "//kb.openrobots.org#",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Robot1",
+            "label": "Robot1",
+            "tooltip": "Robot1",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'El humano le pregunta al robot por el estado de la bater\u00eda.'@es",
+            "label": "'El humano le pregunta al robot por el estado de la bater\u00eda.'",
+            "tooltip": "'El humano le pregunta al robot por el estado de la bater\u00eda.'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "n2",
+            "label": "n2",
+            "tooltip": "n2",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "'bottle'@en",
+            "label": "'bottle'",
+            "tooltip": "'bottle'",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Interaction5",
+            "label": "Interaction5",
+            "tooltip": "Interaction5",
+            "size": 2.0,
+            "orig_size": 2.0
+        },
+        {
+            "id": "Greeting",
+            "label": "Greeting",
+            "tooltip": "Greeting",
+            "size": 2.0,
+            "orig_size": 2.0
+        }
+    ]
+}
+              const Graph = ForceGraph()
+              (document.getElementById('graph'))
+                .graphData(j)
+                .nodeId('id')
+                .nodeLabel('tooltip')
+                .nodeVal('size')
+                        .nodeAutoColorBy('group')
+                        .linkWidth((link) => link.width)
+                            .nodeCanvasObject((node, ctx, globalScale) => {
+                      const label = node.label;
+                      const fontSize = 12/globalScale;
+                      ctx.font = `${fontSize}px Sans-Serif`;
+                      const textWidth = ctx.measureText(label).width;
+                      const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); // some padding
+                      
+                      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                      ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - 10 - 
+                      bckgDimensions[1] / 2, ...bckgDimensions);
+                      ctx.textAlign = 'center';
+                      ctx.textBaseline = 'middle';
+                      
+                        ctx.fillStyle = (node.color);
+                        
+                      ctx.fillText(label, node.x, node.y - 10);
+                      
+                      ctx.beginPath(); ctx.arc(node.x, node.y, node.size, 0, 2 * Math.PI, false);  ctx.fill();
+                      node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
+                      })        .linkColor((link) => link.color)  </script>
+            </body>
