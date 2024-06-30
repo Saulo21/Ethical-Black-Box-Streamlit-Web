@@ -11,15 +11,33 @@ st.set_page_config(
     layout="wide"
 )
 
-# Logo y título
-c1, c2 = st.columns([0.2, 0.7])
+# Logo en la parte superior centrado
+c1, c2, c3 = st.columns([1, 3, 1])
 
 with c1:
-    st.image('images/logo.png', width=110)
+    st.image('images/logo_amor_azulupm.png', width=300)
+
+# Logo y título
+c1, c2, c3 = st.columns([1, 3, 1])
     
 with c2:
     st.caption("")
-    new_title = '<p style="color:#00629b; font-size: 80px;">Ethical Black Box</p> <hr style="border: 1px solid #00629b;">'
+    new_title = '''
+    <div style="
+        text-align: center;
+        color: #00629b;
+        font-size: 80px;
+        font-weight: bold;
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(90deg, rgba(0,98,155,1) 0%, rgba(0,170,224,1) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    ">
+        Ethical Black Box
+    </div>
+    <hr style="border: 1px solid #00629b;">
+    '''
     st.markdown(new_title, unsafe_allow_html=True)
 
 # Cargar CSS
@@ -143,6 +161,15 @@ with tab2:
                     st.progress(total_Robot_Interactions / len(interactions) if len(interactions) > 0 else 0)
                     
                 
+                st.markdown('<div style="color:#00629b; font-size: 40px;">Kibana Visualizations</div> <hr style="border: 1px solid #00629b; width: 50%; margin-left: 0;">', unsafe_allow_html=True)
+                if data is not None:
+                    kibana_iframe = '''
+                    <iframe src="http://localhost:5601/s/robots/app/dashboards#/view/a0192750-33cd-11ef-9e4a-13c30e4a9272?embed=true&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-15m,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(hidePanelTitles:!f,syncColors:!f,useMargins:!t),panels:!((embeddableConfig:(attributes:(references:!((id:d0cbf270-33c7-11ef-9e4a-13c30e4a9272,name:indexpattern-datasource-current-indexpattern,type:index-pattern),(id:d0cbf270-33c7-11ef-9e4a-13c30e4a9272,name:indexpattern-datasource-layer-461b6069-35d7-4f41-96ac-21eba4051258,type:index-pattern)),state:(datasourceStates:(indexpattern:(layers:('461b6069-35d7-4f41-96ac-21eba4051258':(columnOrder:!('96afb255-1f51-425e-8572-b6a4476be7a7','55e10013-e68b-40ef-8501-95b553db61e4'),columns:('55e10013-e68b-40ef-8501-95b553db61e4':(dataType:number,isBucketed:!f,label:'Count%20of%20records',operationType:count,params:(),scale:ratio,sourceField:Records),'96afb255-1f51-425e-8572-b6a4476be7a7':(dataType:string,isBucketed:!t,label:'Top%20values%20of%20hasEmotionalState.keyword',operationType:terms,params:(missingBucket:!f,orderBy:(columnId:'55e10013-e68b-40ef-8501-95b553db61e4',type:column),orderDirection:desc,otherBucket:!t,size:5),scale:ordinal,sourceField:hasEmotionalState.keyword)),incompleteColumns:())))),filters:!(),query:(language:kuery,query:''),visualization:(layers:!((categoryDisplay:default,groups:!('96afb255-1f51-425e-8572-b6a4476be7a7'),layerId:'461b6069-35d7-4f41-96ac-21eba4051258',layerType:data,legendDisplay:default,metric:'55e10013-e68b-40ef-8501-95b553db61e4',nestedLegend:!f,numberDisplay:percent)),shape:donut)),title:'',type:lens,visualizationType:lnsPie),enhancements:()),gridData:(h:15,i:d427bb20-31a5-4f86-9fba-96e1412b2d5e,w:24,x:0,y:0),panelIndex:d427bb20-31a5-4f86-9fba-96e1412b2d5e,type:lens,version:'7.17.22'),(embeddableConfig:(attributes:(references:!((id:d0cbf270-33c7-11ef-9e4a-13c30e4a9272,name:indexpattern-datasource-current-indexpattern,type:index-pattern),(id:d0cbf270-33c7-11ef-9e4a-13c30e4a9272,name:indexpattern-datasource-layer-1e70b3ed-8382-4013-8bf1-f40e56f5bfd1,type:index-pattern)),state:(datasourceStates:(indexpattern:(layers:('1e70b3ed-8382-4013-8bf1-f40e56f5bfd1':(columnOrder:!(dc29c226-bf1a-4698-aed5-01ed00a07cae,'0e333881-980d-488e-92b8-ea63d6e1b8b8'),columns:('0e333881-980d-488e-92b8-ea63d6e1b8b8':(dataType:number,isBucketed:!f,label:'Count%20of%20records',operationType:count,scale:ratio,sourceField:Records),dc29c226-bf1a-4698-aed5-01ed00a07cae:(dataType:string,isBucketed:!t,label:'Top%20values%20of%20hasEmotionalState.keyword',operationType:terms,params:(missingBucket:!f,orderBy:(columnId:'0e333881-980d-488e-92b8-ea63d6e1b8b8',type:column),orderDirection:desc,otherBucket:!t,size:5),scale:ordinal,sourceField:hasEmotionalState.keyword)),incompleteColumns:())))),filters:!(),query:(language:kuery,query:''),visualization:(axisTitlesVisibilitySettings:(x:!t,yLeft:!t,yRight:!t),fittingFunction:None,gridlinesVisibilitySettings:(x:!t,yLeft:!t,yRight:!t),labelsOrientation:(x:0,yLeft:0,yRight:0),layers:!((accessors:!('0e333881-980d-488e-92b8-ea63d6e1b8b8'),layerId:'1e70b3ed-8382-4013-8bf1-f40e56f5bfd1',layerType:data,position:top,seriesType:bar_stacked,showGridlines:!f,xAccessor:dc29c226-bf1a-4698-aed5-01ed00a07cae)),legend:(isVisible:!t,position:right),preferredSeriesType:bar_stacked,tickLabelsVisibilitySettings:(x:!t,yLeft:!t,yRight:!t),valueLabels:hide,yLeftExtent:(mode:full),yRightExtent:(mode:full))),title:'',type:lens,visualizationType:lnsXY),enhancements:()),gridData:(h:15,i:d4e466d5-02ee-4b2a-9631-9250ced8219b,w:24,x:24,y:0),panelIndex:d4e466d5-02ee-4b2a-9631-9250ced8219b,type:lens,version:'7.17.22'),(embeddableConfig:(attributes:(references:!((id:d0cbf270-33c7-11ef-9e4a-13c30e4a9272,name:indexpattern-datasource-current-indexpattern,type:index-pattern),(id:d0cbf270-33c7-11ef-9e4a-13c30e4a9272,name:indexpattern-datasource-layer-a777d4e3-e3d0-47ed-9036-2bf30d4445ef,type:index-pattern)),state:(datasourceStates:(indexpattern:(layers:(a777d4e3-e3d0-47ed-9036-2bf30d4445ef:(columnOrder:!('733afeaa-3169-4d7a-869b-7c79f887c9ca','5ed5d4fd-262a-495e-80ea-54b49707f3c5',ee5d79e0-02cb-4e70-a6aa-a92e4e8c8620),columns:('5ed5d4fd-262a-495e-80ea-54b49707f3c5':(customLabel:!t,dataType:number,filter:(language:kuery,query:'type.keyword%20:%20%22Human%22%20'),isBucketed:!f,label:Human,operationType:unique_count,scale:ratio,sourceField:type.keyword),'733afeaa-3169-4d7a-869b-7c79f887c9ca':(dataType:string,isBucketed:!t,label:Filters,operationType:filters,params:(filters:!((input:(language:kuery,query:''),label:''))),scale:ordinal),ee5d79e0-02cb-4e70-a6aa-a92e4e8c8620:(customLabel:!t,dataType:number,filter:(language:kuery,query:'type.keyword%20:%20%22Robot%22%20'),isBucketed:!f,label:Robot,operationType:unique_count,scale:ratio,sourceField:type.keyword)),incompleteColumns:())))),filters:!(),query:(language:kuery,query:''),visualization:(axisTitlesVisibilitySettings:(x:!t,yLeft:!t,yRight:!t),fittingFunction:None,gridlinesVisibilitySettings:(x:!t,yLeft:!t,yRight:!t),labelsOrientation:(x:0,yLeft:0,yRight:0),layers:!((accessors:!('5ed5d4fd-262a-495e-80ea-54b49707f3c5',ee5d79e0-02cb-4e70-a6aa-a92e4e8c8620),layerId:a777d4e3-e3d0-47ed-9036-2bf30d4445ef,layerType:data,position:top,seriesType:bar,showGridlines:!f,xAccessor:'733afeaa-3169-4d7a-869b-7c79f887c9ca')),legend:(isVisible:!t,position:right,showSingleSeries:!t),preferredSeriesType:bar,tickLabelsVisibilitySettings:(x:!t,yLeft:!t,yRight:!t),valueLabels:inside,xTitle:'Humans%20and%20robots',yLeftExtent:(mode:full),yRightExtent:(mode:full),yTitle:Amount)),title:'',type:lens,visualizationType:lnsXY),enhancements:()),gridData:(h:15,i:'59792b21-81f1-496d-bb27-470d6f865f47',w:24,x:0,y:15),panelIndex:'59792b21-81f1-496d-bb27-470d6f865f47',type:lens,version:'7.17.22')),query:(language:kuery,query:''),tags:!(),timeRestore:!f,title:KG,viewMode:view)" height="600" width="800"></iframe>
+                    '''
+                    components.html(kibana_iframe, height=1000)
+                else:
+                    st.warning("Please upload a CSV file in the 'Upload CSV' tab")
+                
                 st.markdown('<div style="color:#00629b; font-size: 35px;"> </div>', unsafe_allow_html=True)    
                 st.markdown('<div style="color:#00629b; font-size: 35px;">Display data on status changes</div>', unsafe_allow_html=True)
                 
@@ -153,58 +180,44 @@ with tab2:
 
                     for _, interaction in interactions.iterrows():
                         interaction_id = interaction['node1']
-                        emotionalStates = data[data['node2'] == interaction_id]
+                        emotionalStates = data[(data['label'] == 'hasEmotionalState') & (data['node1'] == selected_robot)]
 
                         if not emotionalStates.empty:
-                            emotionalStates_node1_values = emotionalStates['node1'].unique()
-                            emotionalStatesInteractions = data[data['node1'].isin(emotionalStates_node1_values)]
-
-                            if not emotionalStatesInteractions.empty:
-                                st.write(f"Interaction: {interaction_id}")
-                                st.write(emotionalStatesInteractions)
+                            for _, state in emotionalStates.iterrows():
+                                state_value = state['node2']
+                                emotional_states_data.append((selected_robot, state_value))
                                 interaction_names.append(interaction_id)
-                                emotional_states_data.append(emotionalStatesInteractions)
 
-                # Modificar los datos de la gráfica para incluir información detallada
-                timeline_data = pd.DataFrame({
-                    'Interaction': interaction_names,
-                    'Index': range(len(interaction_names)),
-                    'Details': ['<br>'.join(map(str, df.values.tolist())) for df in emotional_states_data]
-                })
+                    if emotional_states_data:
+                        emotional_states_df = pd.DataFrame(emotional_states_data, columns=['Robot', 'Emotional State'])
+                        st.dataframe(emotional_states_df)
+                    else:
+                        st.warning(f"No emotional state data found for {selected_robot}")
 
-                # Crear la gráfica con plotly
-                fig = go.Figure()
+                    st.markdown('<div style="color:#00629b; font-size: 35px;">Graph of Emotional States</div>', unsafe_allow_html=True)
 
-                fig.add_trace(go.Scatter(
-                    x=timeline_data['Index'],
-                    y=[1] * len(timeline_data),
-                    mode='markers+text',
-                    marker=dict(size=12, color='#636EFA'),
-                    text=timeline_data['Interaction'],
-                    hovertext=timeline_data['Details'],
-                    textposition="top center"
-                ))
+                    if emotional_states_data:
+                        fig = go.Figure()
 
-                # Configurar el diseño de la gráfica
-                st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;"> </div>', unsafe_allow_html=True)
-                st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;">Timeline of Interactions</div>', unsafe_allow_html=True)
-                
-                fig.update_layout(
-                    showlegend=False,
-                    xaxis=dict(
-                        showline=False, showgrid=False, showticklabels=False
-                    ),
-                    yaxis=dict(
-                        showline=False, showgrid=False, showticklabels=False
-                    ),
-                    plot_bgcolor='#FFFFFF'
-                )
+                        emotional_states_count = emotional_states_df['Emotional State'].value_counts()
+                        fig.add_trace(go.Bar(
+                            x=emotional_states_count.index,
+                            y=emotional_states_count.values,
+                            marker_color='blue'
+                        ))
 
-                # Mostrar la gráfica en Streamlit
-                st.plotly_chart(fig, use_container_width=True)
+                        fig.update_layout(
+                            title=f"Emotional State Distribution for {selected_robot}",
+                            xaxis_title="Emotional State",
+                            yaxis_title="Count",
+                            title_x=0.5
+                        )
 
-        else:
-            st.error("El archivo CSV no contiene las columnas necesarias ('node1', 'node2', 'label').")
+                        st.plotly_chart(fig)
+                    else:
+                        st.warning(f"No emotional state data found for {selected_robot}")
+            else:
+                st.warning("Please upload a CSV file in the 'Upload CSV' tab")
     else:
         st.warning("Please upload a CSV file in the 'Upload CSV' tab")
 
@@ -212,76 +225,121 @@ with tab3:
     st.markdown('<div style="color:#00629b; font-size: 35px;">Human Statistics</div>', unsafe_allow_html=True)
     if data is not None:
         if 'node1' in data.columns and 'node2' in data.columns:
-            # Contar robots y humanos
+            # Contar humanos
             humans = data[data['node2'] == 'Human']['node1'].unique()
-
             num_humans = len(humans)
+            
+            st.markdown(f'<div style="color:#00a9e0; font-size: 20px;">Number of Humans: {num_humans}</div>', unsafe_allow_html=True)
+            st.markdown(f"<div class='icon'> {'🧍' * num_humans}</div>", unsafe_allow_html=True)
 
-            st.markdown(f'<div style="color:#00a9e0; font-size: 20px;">Number of Humans: {num_robots}</div>', unsafe_allow_html=True)
-            st.markdown(f"<div class='icon'> {'👨 ' * num_humans}</div>", unsafe_allow_html=True)
-            st.markdown(f'<div style="color:#00a9e0; font-size: 20px;"> </div>', unsafe_allow_html=True)
-        
-        # Lógica adicional para obtener el valor de label para cada robot y humano
+        # Lógica adicional para obtener el valor de label para cada humano
         st.markdown('<div style="color:#00629b; font-size: 35px;">Information about each Human</div>', unsafe_allow_html=True)
         if 'node1' in data.columns and 'node2' in data.columns and 'label' in data.columns:
-            # Filtrar los nombres de los robots
+            # Filtrar los nombres de los humanos
             human_names = data[data['node2'] == 'Human']['node1'].unique()
 
-            humans_results = []
+            results = []
             for human in human_names:
                 label_value = data[(data['node1'] == human) & (data['label'] == 'type')]['node2'].values
                 label_value1 = data[(data['node1'] == human) & (data['label'] == 'label')]['node2'].values
                 if len(label_value) > 0:
-                    humans_results.append((human, label_value[0], label_value1[0]))
+                    results.append((human, label_value[0], label_value1[0]))
 
-            if humans_results:
-                human_results_df = pd.DataFrame(humans_results, columns=['Human', 'Label Value', 'name'])
-                st.dataframe(human_results_df)
+            if results:
+                results_df = pd.DataFrame(results, columns=['Human', 'Label Value', 'name'])
+                st.dataframe(results_df)
             else:
-                st.warning("No se encontraron valores para los robots especificados.")
-                    
-    if data is not None:
-        # Filtrar por node1 cuando node2 = 'Human'
-        humans = data[data['node2'] == 'Human']
-        humans_names = humans['node1'].unique()
+                st.warning("No se encontraron valores para los humanos especificados.")
+                
+            if 'label' in data.columns and 'node1' in data.columns and 'node2' in data.columns:
+                # Filtrar por node1 cuando node2 = 'Human'
+                humans = data[data['node2'] == 'Human']
+                human_names = humans['node1'].unique()
 
-        st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;">Select a human</div>', unsafe_allow_html=True)
-        selected_human = st.selectbox("", humans_names)
-        st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;"> </div>', unsafe_allow_html=True)
+                st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;">Select a human</div>', unsafe_allow_html=True)
+                selected_human = st.selectbox("", human_names)
+                st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;"> </div>', unsafe_allow_html=True)
 
-        interactionsHuman = data[data['node2'] == 'Action']
+                interactions = data[data['node2'] == 'Action']
 
-        st.markdown(f'<div style="color:#00a9e0; font-size: 20px;">Interactions carried out by {selected_human}:</div>', unsafe_allow_html=True)
+                st.markdown(f'<div style="color:#00a9e0; font-size: 20px;">Interactions carried out by {selected_human}:</div>', unsafe_allow_html=True)
 
+                col1, col2 = st.columns([1, 1])
 
-        col1, col2 = st.columns([1, 1])
+                total_Human_Interactions = 0
 
-        total_Human_Interactions = 0
+                with col1:
+                    for _, interaction in interactions.iterrows():
+                        interaction_id = interaction['node1']
+                        interactionByHuman = data[(data['label'] == "performedBy") & (data['node2'] == selected_human) & (data['node1'] == interaction_id)]
 
-        with col1:
-            for _, interaction in interactionsHuman.iterrows():
-                interaction_id = interaction['node1']
-                interactionByHuman = data[(data['label'] == "performedBy") & (data['node2'] == selected_human) & (data['node1'] == interaction_id)]
+                        if not interactionByHuman.empty:
+                            total_Human_Interactions += 1
+                            st.write(f"Interaction: {interaction_id}")
+                            st.write(interactionByHuman)
 
-                if not interactionByHuman.empty:
-                    total_Human_Interactions += 1
-                    st.write(f"Interaction: {interaction_id}")
-                    st.write(interactionByHuman)
+                with col2:
+                    st.markdown('<div style="color:#00629b; font-size: 35px;">Overview</div>', unsafe_allow_html=True)
+                    st.metric(label="Total Interactions", value=total_Human_Interactions, delta=f"{total_Human_Interactions} 🟢")
 
-        with col2:
-            st.markdown('<div style="color:#00629b; font-size: 35px;">Overview</div>', unsafe_allow_html=True)
-            st.metric(label="Total Interactions", value=total_Human_Interactions, delta=f"{total_Human_Interactions} 🟢")
+                    st.markdown('<div style="color:#00629b; font-size: 35px;">Interactions Status</div>', unsafe_allow_html=True)
+                    st.success(f"The human {selected_human} has carried out a total of {total_Human_Interactions} interactions.")
 
-            st.markdown('<div style="color:#00629b; font-size: 35px;">Interactions Status</div>', unsafe_allow_html=True)
-            st.success(f"The human {selected_human} has carried out a total of {total_Human_Interactions} interactions.")
+                    st.markdown('<div style="color:#00629b; font-size: 35px;">Progress</div>', unsafe_allow_html=True)
+                    st.progress(total_Human_Interactions / len(interactions) if len(interactions) > 0 else 0)
 
-            st.markdown('<div style="color:#00629b; font-size: 35px;">Progress</div>', unsafe_allow_html=True)
-            st.progress(total_Human_Interactions / len(interactionsHuman) if len(interactionsHuman) > 0 else 0)
+                st.markdown('<div style="color:#00629b; font-size: 35px;"> </div>', unsafe_allow_html=True)    
+                st.markdown('<div style="color:#00629b; font-size: 35px;">Display data on status changes</div>', unsafe_allow_html=True)
 
+                # Agregar un contenedor expandible
+                with st.expander(f"Emotional state changes by {selected_human}"):
+                    interaction_names = []
+                    emotional_states_data = []
+
+                    for _, interaction in interactions.iterrows():
+                        interaction_id = interaction['node1']
+                        emotionalStates = data[(data['label'] == 'hasEmotionalState') & (data['node1'] == selected_human)]
+
+                        if not emotionalStates.empty:
+                            for _, state in emotionalStates.iterrows():
+                                state_value = state['node2']
+                                emotional_states_data.append((selected_human, state_value))
+                                interaction_names.append(interaction_id)
+
+                    if emotional_states_data:
+                        emotional_states_df = pd.DataFrame(emotional_states_data, columns=['Human', 'Emotional State'])
+                        st.dataframe(emotional_states_df)
+                    else:
+                        st.warning(f"No emotional state data found for {selected_human}")
+
+                    st.markdown('<div style="color:#00629b; font-size: 35px;">Graph of Emotional States</div>', unsafe_allow_html=True)
+
+                    if emotional_states_data:
+                        fig = go.Figure()
+
+                        emotional_states_count = emotional_states_df['Emotional State'].value_counts()
+                        fig.add_trace(go.Bar(
+                            x=emotional_states_count.index,
+                            y=emotional_states_count.values,
+                            marker_color='blue'
+                        ))
+
+                        fig.update_layout(
+                            title=f"Emotional State Distribution for {selected_human}",
+                            xaxis_title="Emotional State",
+                            yaxis_title="Count",
+                            title_x=0.5
+                        )
+
+                        st.plotly_chart(fig)
+                    else:
+                        st.warning(f"No emotional state data found for {selected_human}")
+            else:
+                st.warning("Please upload a CSV file in the 'Upload CSV' tab")
     else:
         st.warning("Please upload a CSV file in the 'Upload CSV' tab")
-
-# Pie de página
+        
+        # Pie de página
 st.markdown(
     """
     <hr style="border: 1px solid #00629b;">
@@ -290,11 +348,11 @@ st.markdown(
 )
 
 # Crear una columna vacía a la izquierda y a la derecha para centrar el contenido
-col1, col2, col3 = st.columns([1, 2, 1])
+col1, col2, col3 = st.columns([0.1, 3, 0.1])
 
 with col2:
     # Usar columnas internas para alinear la imagen y el texto
-    col2a, col2b = st.columns([1, 4])
+    col2a, col2b, col2c, col2d = st.columns([0.8, 2, 1.5, 1.5])
     with col2a:
         st.image('images/logo_gsi.png', width=75)
     with col2b:
@@ -307,6 +365,11 @@ with col2:
             """,
             unsafe_allow_html=True
         )
+    with col2c:
+        st.image('images/logo_amor_azulupm.png', width=200)   
+    with col2d:
+        st.image('images/ministerio.png', width=200)     
+         
     # Añadir un padding inferior para el pie de página
     st.markdown(
         """
@@ -314,3 +377,4 @@ with col2:
         """,
         unsafe_allow_html=True
     )
+
