@@ -172,10 +172,7 @@ with tab2:
                 else:
                     st.warning("Please upload a CSV file in the 'Upload CSV' tab")
                 
-                st.markdown('<div style="color:#00629b; font-size: 35px;"> </div>', unsafe_allow_html=True)    
-                st.markdown('<div style="color:#00629b; font-size: 35px;">Display data on status changes</div>', unsafe_allow_html=True)
-                
-                st.markdown('<div style="color:#00629b; font-size: 35px;">Emotions1</div>', unsafe_allow_html=True)
+                st.markdown('<div style="color:#00629b; font-size: 35px;"> </div>', unsafe_allow_html=True)   
                 
                 def get_interactions_for_robot(selected_robot):
                     # Filtrar las interacciones realizadas por el robot seleccionado
@@ -226,11 +223,175 @@ with tab2:
 
                     return result_data
                 
-                st.markdown('<div style="color:#00629b; font-size: 35px;">Emotions2</div>', unsafe_allow_html=True)
+                st.markdown('<div style="color:#00629b; font-size: 35px;">Emotions for each robot</div>', unsafe_allow_html=True)
                     
                 if selected_robot:
                     result_data = get_interactions_for_robot(selected_robot)
-                    st.dataframe(result_data)
+                    
+                    # Filtrar los datos para EmotionalState no nulos
+                    emotional_data = result_data[result_data['EmotionalState'].notnull()]
+
+                    if not emotional_data.empty:
+                        # Formatear las fechas
+                        emotional_data['DateEmotionalState'] = emotional_data['DateEmotionalState'].str.lstrip('^')
+                        emotional_data['DateEmotionalState'] = pd.to_datetime(emotional_data['DateEmotionalState'], format='%Y-%m-%dT%H:%M:%SZ')
+
+                        # Asignar colores específicos a cada emoción
+                        unique_emotions = emotional_data['EmotionalState'].unique()
+                        colors = px.colors.qualitative.Plotly[:len(unique_emotions)]
+                        color_map = dict(zip(unique_emotions, colors))
+
+                        # Generar la gráfica de estados emocionales a lo largo del tiempo
+                        fig_time = px.scatter(emotional_data, x='DateEmotionalState', y='EmotionalState', 
+                              title='Emotional States Over Time', 
+                              labels={'DateEmotionalState': 'Date', 'EmotionalState': 'Emotional State'},
+                              color='EmotionalState',
+                              color_discrete_map=color_map,
+                              template='plotly_dark')
+
+                        fig_time.update_traces(marker=dict(size=10), selector=dict(mode='markers'))
+                        fig_time.update_layout(xaxis_title='Date', yaxis_title='Emotional State', showlegend=False)
+
+                        # Generar la gráfica de recuento de sentimientos
+                        emotional_count = emotional_data['EmotionalState'].value_counts().reset_index()
+                        emotional_count.columns = ['EmotionalState', 'Count']
+
+                        fig_count = px.bar(emotional_count, x='EmotionalState', y='Count', 
+                           title='Count of Emotional States', 
+                           labels={'EmotionalState': 'Emotional State', 'Count': 'Count'},
+                           color='EmotionalState',
+                           color_discrete_map=color_map,
+                           template='plotly_dark')
+
+                        fig_count.update_layout(xaxis_title='Emotional State', yaxis_title='Count', showlegend=False)
+
+                        # Crear la leyenda utilizando Streamlit
+                        legend_items = []
+                        for emotion, color in color_map.items():
+                            legend_items.append(f"<div style='display: flex; align-items: center; margin-right: 20px;'>"
+                                                f"<div style='width: 20px; height: 20px; background-color: {color}; margin-right: 10px;'></div>"
+                                                f"<div style='font-size: 16px;'>{emotion}</div></div>")
+                        legend_html = "<div style='display: flex; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;'>" + "".join(legend_items) + "</div>"
+
+                        st.markdown(legend_html, unsafe_allow_html=True)
+
+                        # Mostrar ambas gráficas una al lado de la otra
+                        col1, col2 = st.columns(2)
+                        col1.plotly_chart(fig_time)
+                        col2.plotly_chart(fig_count)
+                
+                def get_interactions_for_all_robots(data):
+                    # Obtener todos los robots
+                    robots = data[data['node2'] == 'Robot']['node1'].unique()
+    
+                    # Inicializar listas para almacenar los resultados
+                    robots_list = []
+                    interaction_list = []
+                    date_interaction_list = []
+                    emotional_state_list = []
+                    date_emotional_state_list = []
+
+                    # Iterar sobre cada robot
+                    for selected_robot in robots:
+                        # Filtrar las interacciones realizadas por el robot seleccionado
+                        interactions = data[(data['label'] == 'performedBy') & (data['node2'] == selected_robot) | 
+                                    (data['label'] == 'objectOfAction') & (data['node2'] == selected_robot)]
+        
+                        # Iterar sobre cada interacción
+                        for _, interaction_row in interactions.iterrows():
+                            interaction = interaction_row['node1']
+            
+                            # Obtener la fecha de la interacción
+                            date_interaction = data[(data['node1'] == interaction) & (data['label'] == 'date')]['node2'].values
+                            date_interaction = date_interaction[0] if date_interaction else None
+            
+                            # Obtener el estado emocional causado por la interacción
+                            emotional_state_rows = data[(data['label'] == 'causedBy') & (data['node2'] == interaction)]
+                            if not emotional_state_rows.empty:
+                                emotional_state_node = emotional_state_rows['node1'].values[0]
+                                emotional_state = data[(data['node1'] == emotional_state_node) & (data['label'] == 'hasEmotionalState')]['node2'].values
+                                emotional_state = emotional_state[0] if emotional_state else None
+
+                                # Obtener la fecha del estado emocional
+                                date_emotional_state = data[(data['node1'] == emotional_state_node) & (data['label'] == 'date')]['node2'].values
+                                date_emotional_state = date_emotional_state[0] if date_emotional_state else None
+                            else:
+                                emotional_state = None
+                                date_emotional_state = None
+
+                            # Añadir los resultados a las listas
+                            robots_list.append(selected_robot)
+                            interaction_list.append(interaction)
+                            date_interaction_list.append(date_interaction)
+                            emotional_state_list.append(emotional_state)
+                            date_emotional_state_list.append(date_emotional_state)
+
+                    # Crear el DataFrame resultante
+                    result_data = pd.DataFrame({
+                        'Robot': robots_list,
+                        'Interaction': interaction_list,
+                        'DateInteraction': date_interaction_list,
+                        'EmotionalState': emotional_state_list,
+                        'DateEmotionalState': date_emotional_state_list
+                     })
+
+                    return result_data
+
+            st.markdown('<div style="color:#00629b; font-size: 35px;">Emotions resume for all robots</div>', unsafe_allow_html=True)
+
+            result_data = get_interactions_for_all_robots(data)
+
+            # Filtrar los datos para EmotionalState no nulos
+            emotional_data = result_data[result_data['EmotionalState'].notnull()]
+
+            if not emotional_data.empty:
+                # Formatear las fechas
+                emotional_data['DateEmotionalState'] = emotional_data['DateEmotionalState'].str.lstrip('^')
+                emotional_data['DateEmotionalState'] = pd.to_datetime(emotional_data['DateEmotionalState'], format='%Y-%m-%dT%H:%M:%SZ')
+
+                # Asignar colores específicos a cada emoción
+                unique_emotions = emotional_data['EmotionalState'].unique()
+                colors = px.colors.qualitative.Plotly[:len(unique_emotions)]
+                color_map = dict(zip(unique_emotions, colors))
+
+                # Generar la gráfica de estados emocionales a lo largo del tiempo
+                fig_time = px.line(emotional_data, x='DateEmotionalState', y='EmotionalState', 
+                                    title='Emotional States Over Time', 
+                                    labels={'DateEmotionalState': 'Date', 'EmotionalState': 'Emotional State'},
+                                    color='Robot', 
+                                    markers=True,
+                                    template='plotly_dark')
+
+                fig_time.update_traces(marker=dict(size=10), selector=dict(mode='markers'))
+                fig_time.update_layout(xaxis_title='Date', yaxis_title='Emotional State', showlegend=False)
+
+                # Generar la gráfica de recuento de sentimientos
+                emotional_count = emotional_data['EmotionalState'].value_counts().reset_index()
+                emotional_count.columns = ['EmotionalState', 'Count']
+
+                fig_count = px.bar(emotional_count, x='EmotionalState', y='Count', 
+                                title='Count of Emotional States', 
+                                labels={'EmotionalState': 'Emotional State', 'Count': 'Count'},
+                                color='EmotionalState',
+                                color_discrete_map=color_map,
+                                template='plotly_dark')
+
+                fig_count.update_layout(xaxis_title='Emotional State', yaxis_title='Count', showlegend=False)
+
+                # Crear la leyenda utilizando Streamlit
+                legend_items = []
+                for emotion, color in color_map.items():
+                    legend_items.append(f"<div style='display: flex; align-items: center; margin-right: 20px;'>"
+                                        f"<div style='width: 20px; height: 20px; background-color: {color}; margin-right: 10px;'></div>"
+                                        f"<div style='font-size: 16px;'>{emotion}</div></div>")
+                legend_html = "<div style='display: flex; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;'>" + "".join(legend_items) + "</div>"
+
+                st.markdown(legend_html, unsafe_allow_html=True)
+
+                # Mostrar ambas gráficas una al lado de la otra
+                col1, col2 = st.columns(2)
+                col1.plotly_chart(fig_time)
+                col2.plotly_chart(fig_count)
                     
             else:
                 st.warning("Please upload a CSV file in the 'Upload CSV' tab")
