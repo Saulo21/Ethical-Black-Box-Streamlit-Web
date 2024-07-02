@@ -126,159 +126,6 @@ with tab2:
                 st.warning("No se encontraron valores para los robots especificados.")
 
             if 'label' in data.columns and 'node1' in data.columns and 'node2' in data.columns:
-                # Filtrar por node1 cuando node2 = 'Robot'
-                robots = data[data['node2'] == 'Robot']
-                robot_names = robots['node1'].unique()
-
-                st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;">Select a robot</div>', unsafe_allow_html=True)
-                selected_robot = st.selectbox("", robot_names)
-                st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;"> </div>', unsafe_allow_html=True)
-                
-                interactions = data[data['node2'] == 'Action']
-
-                st.markdown(f'<div style="color:#00a9e0; font-size: 20px;">Interactions carried out by {selected_robot}:</div>', unsafe_allow_html=True)
-
-                col1, col2 = st.columns([1, 1])
-
-                total_Robot_Interactions = 0
-
-                with col1:
-                    for _, interaction in interactions.iterrows():
-                        interaction_id = interaction['node1']
-                        interactionByRobot = data[(data['label'] == "performedBy") & (data['node2'] == selected_robot) & (data['node1'] == interaction_id)]
-
-                        if not interactionByRobot.empty:
-                            total_Robot_Interactions += 1
-                            st.write(f"Interaction: {interaction_id}")
-                            st.write(interactionByRobot)
-
-                with col2:
-                    st.markdown('<div style="color:#00629b; font-size: 35px;">Overview</div>', unsafe_allow_html=True)
-                    st.metric(label="Total Interactions", value=total_Robot_Interactions, delta=f"{total_Robot_Interactions} 🟢")
-
-                    st.markdown('<div style="color:#00629b; font-size: 35px;">Interactions Status</div>', unsafe_allow_html=True)
-                    st.success(f"The robot {selected_robot} has carried out a total of {total_Robot_Interactions} interactions.")
-
-                    st.markdown('<div style="color:#00629b; font-size: 35px;">Progress</div>', unsafe_allow_html=True)
-                    st.progress(total_Robot_Interactions / len(interactions) if len(interactions) > 0 else 0)
-                    
-                
-                st.markdown('<div style="color:#00629b; font-size: 40px;">Kibana Visualizations</div> <hr style="border: 1px solid #00629b; width: 50%; margin-left: 0;">', unsafe_allow_html=True)
-                if data is not None:
-                    kibana_iframe = '''
-                    <iframe src="http://localhost:5601/s/robots/app/dashboards#/view/a0192750-33cd-11ef-9e4a-13c30e4a9272?embed=true&_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-15m,to:now))&_a=(description:'',filters:!(),fullScreenMode:!f,options:(hidePanelTitles:!f,syncColors:!f,useMargins:!t),panels:!((embeddableConfig:(attributes:(references:!((id:d0cbf270-33c7-11ef-9e4a-13c30e4a9272,name:indexpattern-datasource-current-indexpattern,type:index-pattern),(id:d0cbf270-33c7-11ef-9e4a-13c30e4a9272,name:indexpattern-datasource-layer-461b6069-35d7-4f41-96ac-21eba4051258,type:index-pattern)),state:(datasourceStates:(indexpattern:(layers:('461b6069-35d7-4f41-96ac-21eba4051258':(columnOrder:!('96afb255-1f51-425e-8572-b6a4476be7a7','55e10013-e68b-40ef-8501-95b553db61e4'),columns:('55e10013-e68b-40ef-8501-95b553db61e4':(dataType:number,isBucketed:!f,label:'Count%20of%20records',operationType:count,params:(),scale:ratio,sourceField:Records),'96afb255-1f51-425e-8572-b6a4476be7a7':(dataType:string,isBucketed:!t,label:'Top%20values%20of%20hasEmotionalState.keyword',operationType:terms,params:(missingBucket:!f,orderBy:(columnId:'55e10013-e68b-40ef-8501-95b553db61e4',type:column),orderDirection:desc,otherBucket:!t,size:5),scale:ordinal,sourceField:hasEmotionalState.keyword)),incompleteColumns:())))),filters:!(),query:(language:kuery,query:''),visualization:(layers:!((categoryDisplay:default,groups:!('96afb255-1f51-425e-8572-b6a4476be7a7'),layerId:'461b6069-35d7-4f41-96ac-21eba4051258',layerType:data,legendDisplay:default,metric:'55e10013-e68b-40ef-8501-95b553db61e4',nestedLegend:!f,numberDisplay:percent)),shape:donut)),title:'',type:lens,visualizationType:lnsPie),enhancements:()),gridData:(h:15,i:d427bb20-31a5-4f86-9fba-96e1412b2d5e,w:24,x:0,y:0),panelIndex:d427bb20-31a5-4f86-9fba-96e1412b2d5e,type:lens,version:'7.17.22'),(embeddableConfig:(attributes:(references:!((id:d0cbf270-33c7-11ef-9e4a-13c30e4a9272,name:indexpattern-datasource-current-indexpattern,type:index-pattern),(id:d0cbf270-33c7-11ef-9e4a-13c30e4a9272,name:indexpattern-datasource-layer-1e70b3ed-8382-4013-8bf1-f40e56f5bfd1,type:index-pattern)),state:(datasourceStates:(indexpattern:(layers:('1e70b3ed-8382-4013-8bf1-f40e56f5bfd1':(columnOrder:!(dc29c226-bf1a-4698-aed5-01ed00a07cae,'0e333881-980d-488e-92b8-ea63d6e1b8b8'),columns:('0e333881-980d-488e-92b8-ea63d6e1b8b8':(dataType:number,isBucketed:!f,label:'Count%20of%20records',operationType:count,scale:ratio,sourceField:Records),dc29c226-bf1a-4698-aed5-01ed00a07cae:(dataType:string,isBucketed:!t,label:'Top%20values%20of%20hasEmotionalState.keyword',operationType:terms,params:(missingBucket:!f,orderBy:(columnId:'0e333881-980d-488e-92b8-ea63d6e1b8b8',type:column),orderDirection:desc,otherBucket:!t,size:5),scale:ordinal,sourceField:hasEmotionalState.keyword)),incompleteColumns:())))),filters:!(),query:(language:kuery,query:''),visualization:(axisTitlesVisibilitySettings:(x:!t,yLeft:!t,yRight:!t),fittingFunction:None,gridlinesVisibilitySettings:(x:!t,yLeft:!t,yRight:!t),labelsOrientation:(x:0,yLeft:0,yRight:0),layers:!((accessors:!('0e333881-980d-488e-92b8-ea63d6e1b8b8'),layerId:'1e70b3ed-8382-4013-8bf1-f40e56f5bfd1',layerType:data,position:top,seriesType:bar_stacked,showGridlines:!f,xAccessor:dc29c226-bf1a-4698-aed5-01ed00a07cae)),legend:(isVisible:!t,position:right),preferredSeriesType:bar_stacked,tickLabelsVisibilitySettings:(x:!t,yLeft:!t,yRight:!t),valueLabels:hide,yLeftExtent:(mode:full),yRightExtent:(mode:full))),title:'',type:lens,visualizationType:lnsXY),enhancements:()),gridData:(h:15,i:d4e466d5-02ee-4b2a-9631-9250ced8219b,w:24,x:24,y:0),panelIndex:d4e466d5-02ee-4b2a-9631-9250ced8219b,type:lens,version:'7.17.22'),(embeddableConfig:(attributes:(references:!((id:d0cbf270-33c7-11ef-9e4a-13c30e4a9272,name:indexpattern-datasource-current-indexpattern,type:index-pattern),(id:d0cbf270-33c7-11ef-9e4a-13c30e4a9272,name:indexpattern-datasource-layer-a777d4e3-e3d0-47ed-9036-2bf30d4445ef,type:index-pattern)),state:(datasourceStates:(indexpattern:(layers:(a777d4e3-e3d0-47ed-9036-2bf30d4445ef:(columnOrder:!('733afeaa-3169-4d7a-869b-7c79f887c9ca','5ed5d4fd-262a-495e-80ea-54b49707f3c5',ee5d79e0-02cb-4e70-a6aa-a92e4e8c8620),columns:('5ed5d4fd-262a-495e-80ea-54b49707f3c5':(customLabel:!t,dataType:number,filter:(language:kuery,query:'type.keyword%20:%20%22Human%22%20'),isBucketed:!f,label:Human,operationType:unique_count,scale:ratio,sourceField:type.keyword),'733afeaa-3169-4d7a-869b-7c79f887c9ca':(dataType:string,isBucketed:!t,label:Filters,operationType:filters,params:(filters:!((input:(language:kuery,query:''),label:''))),scale:ordinal),ee5d79e0-02cb-4e70-a6aa-a92e4e8c8620:(customLabel:!t,dataType:number,filter:(language:kuery,query:'type.keyword%20:%20%22Robot%22%20'),isBucketed:!f,label:Robot,operationType:unique_count,scale:ratio,sourceField:type.keyword)),incompleteColumns:())))),filters:!(),query:(language:kuery,query:''),visualization:(axisTitlesVisibilitySettings:(x:!t,yLeft:!t,yRight:!t),fittingFunction:None,gridlinesVisibilitySettings:(x:!t,yLeft:!t,yRight:!t),labelsOrientation:(x:0,yLeft:0,yRight:0),layers:!((accessors:!('5ed5d4fd-262a-495e-80ea-54b49707f3c5',ee5d79e0-02cb-4e70-a6aa-a92e4e8c8620),layerId:a777d4e3-e3d0-47ed-9036-2bf30d4445ef,layerType:data,position:top,seriesType:bar,showGridlines:!f,xAccessor:'733afeaa-3169-4d7a-869b-7c79f887c9ca')),legend:(isVisible:!t,position:right,showSingleSeries:!t),preferredSeriesType:bar,tickLabelsVisibilitySettings:(x:!t,yLeft:!t,yRight:!t),valueLabels:inside,xTitle:'Humans%20and%20robots',yLeftExtent:(mode:full),yRightExtent:(mode:full),yTitle:Amount)),title:'',type:lens,visualizationType:lnsXY),enhancements:()),gridData:(h:15,i:'59792b21-81f1-496d-bb27-470d6f865f47',w:24,x:0,y:15),panelIndex:'59792b21-81f1-496d-bb27-470d6f865f47',type:lens,version:'7.17.22')),query:(language:kuery,query:''),tags:!(),timeRestore:!f,title:KG,viewMode:view)" height="600" width="800"></iframe>
-                    '''
-                    components.html(kibana_iframe, height=500)
-                else:
-                    st.warning("Please upload a CSV file in the 'Upload CSV' tab")
-                
-                st.markdown('<div style="color:#00629b; font-size: 35px;"> </div>', unsafe_allow_html=True)   
-                
-                def get_interactions_for_robot(selected_robot):
-                    # Filtrar las interacciones realizadas por el robot seleccionado
-                    interactions = data[(data['label'] == 'performedBy') & (data['node2'] == selected_robot) | (data['label'] == 'objectOfAction') & (data['node2'] == selected_robot)]
-                    
-                    # Inicializar listas para almacenar los resultados
-                    interaction_list = []
-                    date_interaction_list = []
-                    emotional_state_list = []
-                    date_emotional_state_list = []
-
-                    # Iterar sobre cada interacción
-                    for _, interaction_row in interactions.iterrows():
-                        interaction = interaction_row['node1']
-        
-                        # Obtener la fecha de la interacción
-                        date_interaction = data[(data['node1'] == interaction) & (data['label'] == 'date')]['node2'].values
-                        date_interaction = date_interaction[0] if date_interaction else None
-        
-                        # Obtener el estado emocional causado por la interacción
-                        emotional_state_rows = data[(data['label'] == 'causedBy') & (data['node2'] == interaction)]
-                        if not emotional_state_rows.empty:
-                            emotional_state_node = emotional_state_rows['node1'].values[0]
-                            emotional_state = data[(data['node1'] == emotional_state_node) & (data['label'] == 'hasEmotionalState')]['node2'].values
-                            emotional_state = emotional_state[0] if emotional_state else None
-
-                            # Obtener la fecha del estado emocional
-                            date_emotional_state = data[(data['node1'] == emotional_state_node) & (data['label'] == 'date')]['node2'].values
-                            date_emotional_state = date_emotional_state[0] if date_emotional_state else None
-                        else:
-                            emotional_state = None
-                            date_emotional_state = None
-
-                        # Añadir los resultados a las listas
-                        interaction_list.append(interaction)
-                        date_interaction_list.append(date_interaction)
-                        emotional_state_list.append(emotional_state)
-                        date_emotional_state_list.append(date_emotional_state)
-
-                    # Crear el DataFrame resultante
-                    result_data = pd.DataFrame({
-                    'Robot': selected_robot,
-                    'Interaction': interaction_list,
-                    'DateInteraction': date_interaction_list,
-                    'EmotionalState': emotional_state_list,
-                    'DateEmotionalState': date_emotional_state_list
-    })
-
-                    return result_data
-                
-                st.markdown('<div style="color:#00629b; font-size: 35px;">Emotions for each robot</div>', unsafe_allow_html=True)
-                    
-                if selected_robot:
-                    result_data = get_interactions_for_robot(selected_robot)
-                    
-                    # Filtrar los datos para EmotionalState no nulos
-                    emotional_data = result_data[result_data['EmotionalState'].notnull()]
-
-                    if not emotional_data.empty:
-                        # Formatear las fechas
-                        emotional_data['DateEmotionalState'] = emotional_data['DateEmotionalState'].str.lstrip('^')
-                        emotional_data['DateEmotionalState'] = pd.to_datetime(emotional_data['DateEmotionalState'], format='%Y-%m-%dT%H:%M:%SZ')
-
-                        # Asignar colores específicos a cada emoción
-                        unique_emotions = emotional_data['EmotionalState'].unique()
-                        colors = px.colors.qualitative.Plotly[:len(unique_emotions)]
-                        color_map = dict(zip(unique_emotions, colors))
-
-                        # Generar la gráfica de estados emocionales a lo largo del tiempo
-                        fig_time = px.scatter(emotional_data, x='DateEmotionalState', y='EmotionalState', 
-                              title='Emotional States Over Time', 
-                              labels={'DateEmotionalState': 'Date', 'EmotionalState': 'Emotional State'},
-                              color='EmotionalState',
-                              color_discrete_map=color_map,
-                              template='plotly_dark')
-
-                        fig_time.update_traces(marker=dict(size=10), selector=dict(mode='markers'))
-                        fig_time.update_layout(xaxis_title='Date', yaxis_title='Emotional State', showlegend=False)
-
-                        # Generar la gráfica de recuento de sentimientos
-                        emotional_count = emotional_data['EmotionalState'].value_counts().reset_index()
-                        emotional_count.columns = ['EmotionalState', 'Count']
-
-                        fig_count = px.bar(emotional_count, x='EmotionalState', y='Count', 
-                           title='Count of Emotional States', 
-                           labels={'EmotionalState': 'Emotional State', 'Count': 'Count'},
-                           color='EmotionalState',
-                           color_discrete_map=color_map,
-                           template='plotly_dark')
-
-                        fig_count.update_layout(xaxis_title='Emotional State', yaxis_title='Count', showlegend=False)
-
-                        # Crear la leyenda utilizando Streamlit
-                        legend_items = []
-                        for emotion, color in color_map.items():
-                            legend_items.append(f"<div style='display: flex; align-items: center; margin-right: 20px;'>"
-                                                f"<div style='width: 20px; height: 20px; background-color: {color}; margin-right: 10px;'></div>"
-                                                f"<div style='font-size: 16px;'>{emotion}</div></div>")
-                        legend_html = "<div style='display: flex; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;'>" + "".join(legend_items) + "</div>"
-
-                        st.markdown(legend_html, unsafe_allow_html=True)
-
-                        # Mostrar ambas gráficas una al lado de la otra
-                        col1, col2 = st.columns(2)
-                        col1.plotly_chart(fig_time)
-                        col2.plotly_chart(fig_count)
                 
                 def get_interactions_for_all_robots(data):
                     # Obtener todos los robots
@@ -338,6 +185,7 @@ with tab2:
                     return result_data
 
             st.markdown('<div style="color:#00629b; font-size: 35px;">Emotions resume for all robots</div>', unsafe_allow_html=True)
+            st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;"> </div>', unsafe_allow_html=True)
 
             result_data = get_interactions_for_all_robots(data)
 
@@ -391,7 +239,152 @@ with tab2:
                 # Mostrar ambas gráficas una al lado de la otra
                 col1, col2 = st.columns(2)
                 col1.plotly_chart(fig_time)
-                col2.plotly_chart(fig_count)
+                col2.plotly_chart(fig_count)   
+                
+                
+                # Filtrar por node1 cuando node2 = 'Robot'
+                robots = data[data['node2'] == 'Robot']
+                robot_names = robots['node1'].unique()
+
+                
+                st.markdown('<div style="color:#00629b; font-size: 35px;">Statistics for each robot</div>', unsafe_allow_html=True)
+                st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;">Select a robot</div>', unsafe_allow_html=True)
+                selected_robot = st.selectbox("", robot_names)
+                st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;"> </div>', unsafe_allow_html=True)
+                
+                interactions = data[data['node2'] == 'Action']
+
+                st.markdown(f'<div style="color:#00a9e0; font-size: 20px;">Interactions carried out by {selected_robot}:</div>', unsafe_allow_html=True)
+
+                col1, col2 = st.columns([1, 1])
+
+                total_Robot_Interactions = 0
+
+                with col1:
+                    for _, interaction in interactions.iterrows():
+                        interaction_id = interaction['node1']
+                        interactionByRobot = data[(data['label'] == "performedBy") & (data['node2'] == selected_robot) & (data['node1'] == interaction_id)]
+
+                        if not interactionByRobot.empty:
+                            total_Robot_Interactions += 1
+
+                    st.markdown('<div style="color:#00629b; font-size: 35px;">Overview</div>', unsafe_allow_html=True)
+                    st.metric(label="Total Interactions", value=total_Robot_Interactions, delta=f"{total_Robot_Interactions} 🟢")
+
+                    st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;">Interactions Status</div>', unsafe_allow_html=True)
+                    st.success(f"The robot {selected_robot} has carried out a total of {total_Robot_Interactions} interactions.")
+                
+                st.markdown('<div style="color:#00629b; font-size: 35px;"> </div>', unsafe_allow_html=True)
+                
+                def get_interactions_for_robot(selected_robot):
+                    # Filtrar las interacciones realizadas por el robot seleccionado
+                    interactions = data[(data['label'] == 'performedBy') & (data['node2'] == selected_robot) | (data['label'] == 'objectOfAction') & (data['node2'] == selected_robot)]
+                    
+                    # Inicializar listas para almacenar los resultados
+                    interaction_list = []
+                    date_interaction_list = []
+                    emotional_state_list = []
+                    date_emotional_state_list = []
+
+                    # Iterar sobre cada interacción
+                    for _, interaction_row in interactions.iterrows():
+                        interaction = interaction_row['node1']
+        
+                        # Obtener la fecha de la interacción
+                        date_interaction = data[(data['node1'] == interaction) & (data['label'] == 'date')]['node2'].values
+                        date_interaction = date_interaction[0] if date_interaction else None
+        
+                        # Obtener el estado emocional causado por la interacción
+                        emotional_state_rows = data[(data['label'] == 'causedBy') & (data['node2'] == interaction)]
+                        if not emotional_state_rows.empty:
+                            emotional_state_node = emotional_state_rows['node1'].values[0]
+                            emotional_state = data[(data['node1'] == emotional_state_node) & (data['label'] == 'hasEmotionalState')]['node2'].values
+                            emotional_state = emotional_state[0] if emotional_state else None
+
+                            # Obtener la fecha del estado emocional
+                            date_emotional_state = data[(data['node1'] == emotional_state_node) & (data['label'] == 'date')]['node2'].values
+                            date_emotional_state = date_emotional_state[0] if date_emotional_state else None
+                        else:
+                            emotional_state = None
+                            date_emotional_state = None
+
+                        # Añadir los resultados a las listas
+                        interaction_list.append(interaction)
+                        date_interaction_list.append(date_interaction)
+                        emotional_state_list.append(emotional_state)
+                        date_emotional_state_list.append(date_emotional_state)
+
+                    # Crear el DataFrame resultante
+                    result_data = pd.DataFrame({
+                    'Robot': selected_robot,
+                    'Interaction': interaction_list,
+                    'DateInteraction': date_interaction_list,
+                    'EmotionalState': emotional_state_list,
+                    'DateEmotionalState': date_emotional_state_list
+    })
+
+                    return result_data
+                
+                st.markdown('<div style="color:#00629b; font-size: 35px;"></div>', unsafe_allow_html=True)
+                st.markdown('<div style="color:#00629b; font-size: 35px;">Emotions for each robot</div>', unsafe_allow_html=True)
+                st.markdown('<div style="color:#00629b; font-size: 35px;"></div>', unsafe_allow_html=True)
+                                    
+                if selected_robot:
+                    result_data = get_interactions_for_robot(selected_robot)
+                    
+                    # Filtrar los datos para EmotionalState no nulos
+                    emotional_data = result_data[result_data['EmotionalState'].notnull()]
+
+                    if not emotional_data.empty:
+                        # Formatear las fechas
+                        emotional_data['DateEmotionalState'] = emotional_data['DateEmotionalState'].str.lstrip('^')
+                        emotional_data['DateEmotionalState'] = pd.to_datetime(emotional_data['DateEmotionalState'], format='%Y-%m-%dT%H:%M:%SZ')
+
+                        # Asignar colores específicos a cada emoción
+                        unique_emotions = emotional_data['EmotionalState'].unique()
+                        colors = px.colors.qualitative.Plotly[:len(unique_emotions)]
+                        color_map = dict(zip(unique_emotions, colors))
+
+                        # Generar la gráfica de estados emocionales a lo largo del tiempo
+                        fig_time = px.scatter(emotional_data, x='DateEmotionalState', y='EmotionalState', 
+                              title='Emotional States Over Time', 
+                              labels={'DateEmotionalState': 'Date', 'EmotionalState': 'Emotional State'},
+                              color='EmotionalState',
+                              color_discrete_map=color_map,
+                              template='plotly_dark')
+
+                        fig_time.update_traces(marker=dict(size=10), selector=dict(mode='markers'))
+                        fig_time.update_layout(xaxis_title='Date', yaxis_title='Emotional State', showlegend=False)
+
+                        # Generar la gráfica de recuento de sentimientos
+                        emotional_count = emotional_data['EmotionalState'].value_counts().reset_index()
+                        emotional_count.columns = ['EmotionalState', 'Count']
+
+                        fig_count = px.bar(emotional_count, x='EmotionalState', y='Count', 
+                           title='Count of Emotional States', 
+                           labels={'EmotionalState': 'Emotional State', 'Count': 'Count'},
+                           color='EmotionalState',
+                           color_discrete_map=color_map,
+                           template='plotly_dark')
+
+                        fig_count.update_layout(xaxis_title='Emotional State', yaxis_title='Count', showlegend=False)
+
+                        # Crear la leyenda utilizando Streamlit
+                        legend_items = []
+                        for emotion, color in color_map.items():
+                            legend_items.append(f"<div style='display: flex; align-items: center; margin-right: 20px;'>"
+                                                f"<div style='width: 20px; height: 20px; background-color: {color}; margin-right: 10px;'></div>"
+                                                f"<div style='font-size: 16px;'>{emotion}</div></div>")
+                        legend_html = "<div style='display: flex; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;'>" + "".join(legend_items) + "</div>"
+
+                        st.markdown(legend_html, unsafe_allow_html=True)
+
+                        # Mostrar ambas gráficas una al lado de la otra
+                        col1, col2 = st.columns(2)
+                        col1.plotly_chart(fig_time)
+                        col2.plotly_chart(fig_count)
+                
+                
                     
             else:
                 st.warning("Please upload a CSV file in the 'Upload CSV' tab")
@@ -411,6 +404,8 @@ with tab3:
 
         # Lógica adicional para obtener el valor de label para cada humano
         st.markdown('<div style="color:#00629b; font-size: 35px;">Information about each Human</div>', unsafe_allow_html=True)
+        st.markdown('<div style="color:#00629b; font-size: 35px;"> </div>', unsafe_allow_html=True)
+        
         if 'node1' in data.columns and 'node2' in data.columns and 'label' in data.columns:
             # Filtrar los nombres de los humanos
             human_names = data[data['node2'] == 'Human']['node1'].unique()
