@@ -5,6 +5,9 @@ import plotly.graph_objects as go
 import streamlit.components.v1 as components
 import matplotlib.pyplot as plt
 import seaborn as sns
+import nbformat
+from nbformat import read
+import requests
 
 # Configuración de la página
 st.set_page_config(
@@ -42,9 +45,7 @@ with c2:
     '''
     st.markdown(new_title, unsafe_allow_html=True)
 
-# Cargar CSS
-css_file = open("config/estiloMain.css", "r").read()
-st.markdown(f'<style>{css_file}</style>', unsafe_allow_html=True)
+
 
 # Sidebar para navegación
 with st.sidebar:
@@ -63,6 +64,13 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
+# Cargar el archivo CSS
+def load_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+load_css("style.css")
+        
 # Función para cargar el archivo CSV
 def cargar_csv():
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
@@ -71,18 +79,52 @@ def cargar_csv():
         return data
     return None
 
+# Función para cargar y leer un notebook Jupyter
+def load_notebook(uploaded_file):
+    nb = read(uploaded_file, as_version=4)
+    return nb
+
+# Función para renderizar el contenido del notebook en Streamlit
+def render_notebook(nb):
+    for cell in nb.cells:
+        if cell.cell_type == 'markdown':
+            st.markdown(cell.source)
+        elif cell.cell_type == 'code':
+            st.code(cell.source)
+            # Mostrar la salida del código (si existe)
+            if 'outputs' in cell:
+                for output in cell.outputs:
+                    if output.output_type == 'stream':
+                        st.text(output.text)
+                    elif output.output_type == 'execute_result':
+                        st.json(output.data)
+                    elif output.output_type == 'display_data':
+                        st.json(output.data)
+
+def get_experiment_info(experiment_id):
+    # URL del servidor de MLflow
+    mlflow_url = "http://localhost:5000"  # Actualiza esto si el puerto es diferente
+    
+    # Hacer una solicitud GET para obtener información del experimento específico
+    response = requests.get(f"{mlflow_url}/api/2.0/mlflow/experiments/get", params={"experiment_id": experiment_id})
+    
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return None
+    
 # Tabs
-tab1, tab2, tab3 = st.tabs(["Upload CSV", "Robot Statistics", "Human Statistics"])
+tab1, tab2, tab3, tab4 = st.tabs(["Upload CSV","ML Model" ,"Robot Statistics", "Human Statistics"])
 
 with tab1:
-    st.markdown('<div style="color:#00629b; font-size: 40px;">Upload CSV file</div>', unsafe_allow_html=True)
+    st.markdown ("# Upload CSV file")
     data = cargar_csv()
     if data is not None:
         st.success("File successfully uploaded")
-        st.markdown('<div style="color:#00629b; font-size: 35px;">CSV analysis</div>', unsafe_allow_html=True)
+        st.markdown("# CSV analysis")
         st.dataframe(data)
 
-    st.markdown('<div style="color:#00629b; font-size: 40px;">Knowledge Graph</div> <hr style="border: 1px solid #00629b; width: 50%; margin-left: 0;">', unsafe_allow_html=True)
+    st.markdown("# Knowledge Graph")
     if data is not None:
         # Leer el archivo HTML
         with open("graph.html", "r", encoding='utf-8') as f:
@@ -92,22 +134,130 @@ with tab1:
         components.html(html_content, height=600)
     else:
         st.warning("Please upload a CSV file in the 'Upload CSV' tab")
-
+        
 with tab2:
-    st.markdown('<div style="color:#00629b; font-size: 35px;">Robot Statistics</div>', unsafe_allow_html=True)
+    st.markdown('<div style="color:#00629b; font-size: 40px;">Subir archivo de notebook</div>', unsafe_allow_html=True)
+    
     if data is not None:
         if 'node1' in data.columns and 'node2' in data.columns:
-            # Contar robots y humanos
-            robots = data[data['node2'] == 'Robot']['node1'].unique()
+            model_names = data[data['node2'] == 'MOdel']['node1'].unique()  
+            
+            results = []
+            for model in model_names:
+                label_value = data[(data['node1'] == model) & (data['label'] == 'type')]['node2'].values
+                label_value1 = data[(data['node1'] == model) & (data['label'] == 'label')]['node2'].values
+                if len(label_value) > 0:
+                    results.append((model, label_value[0], label_value1[0]))
 
+            if results:
+                st.markdown("<div class='card-container'>", unsafe_allow_html=True)
+                for model, type_value, name_value in results:
+                    st.markdown(f"""
+                        <div class='card'>
+                            <div class='card-title'>{model}</div>
+                            <div class='card-content'>Type: {type_value}</div>
+                            <div class='card-content'>Name: {name_value}</div>
+                        </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # Obtener la información del experimento
+                    experiment_info = get_experiment_info(name_value)
+                    
+                    print("AAAAAAAHHHHHHHHH")
+                    print(experiment_info)
+                    print("bbbbbbbHHHHHHHHH")
+                    
+                    if experiment_info:
+                        experiment_details = experiment_info['experiment']
+                        st.markdown(f"""
+                            <div class='card'>
+                                <div class='card-title'>Experiment ID: {experiment_details['experiment_id']}</div>
+                                <div class='card-content'>Name: {experiment_details['name']}</div>
+                                <div class='card-content'>Artifact Location: {experiment_details['artifact_location']}</div>
+                                <div class='card-content'>Lifecycle Stage: {experiment_details['lifecycle_stage']}</div>
+                            </div>
+                        """, unsafe_allow_html=True)
+                    else:
+                        st.warning(f"Could not retrieve information for experiment ID {name_value}")
+                        
+                st.markdown("</div>", unsafe_allow_html=True)
+            else:
+                st.warning("No values found for the specified robots.")  
+    else:
+        st.warning("Por favor, sube un archivo de Jupyter Notebook en la pestaña 'Subir notebook'")
+        
+with tab3:
+    st.markdown("""
+        <style>
+            .main-title {
+                text-align: center;
+                color: #00a9e0;
+                font-size: 3em;
+                font-weight: bold;
+                margin-bottom: 20px;
+            }
+            .stat-box {
+                background-color: #e8f4fc;
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .stat-number {
+                font-size: 2.5em;
+                color: #00a9e0;
+                margin: 10px 0;
+            }
+            .robot-icons {
+                font-size: 2em;
+            }
+            .card-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around;
+                margin-top: 20px;
+            }
+            .card {
+                background-color: #ffffff;
+                border-radius: 15px;
+                box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+                margin: 10px;
+                padding: 20px;
+                text-align: center;
+                width: 250px;
+            }
+            .card-title {
+                font-size: 1.5em;
+                color: #00a9e0;
+                margin-bottom: 10px;
+            }
+            .card-content {
+                font-size: 1.2em;
+                color: #333333;
+            }
+        </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<div class='main-title'>Robot Statistics 🤖</div>", unsafe_allow_html=True)
+    
+    if data is not None:
+        if 'node1' in data.columns and 'node2' in data.columns:
+            # Contar robots
+            robots = data[data['node2'] == 'Robot']['node1'].unique()
             num_robots = len(robots)
+
+            st.markdown(f"""
+                <div class='stat-box'>
+                    <div>Number of Robots</div>
+                    <div class='stat-number'>{num_robots}</div>
+                    <div class='robot-icons'>{'🤖 ' * num_robots}</div>
+                </div>
+            """, unsafe_allow_html=True)
             
-            st.markdown(f'<div style="color:#00a9e0; font-size: 20px;">Number of Robots: {num_robots}</div>', unsafe_allow_html=True)
-            st.markdown(f"<div class='icon'> {'🤖 ' * num_robots}</div>", unsafe_allow_html=True)
-            st.markdown(f'<div style="color:#00a9e0; font-size: 20px;"> </div>', unsafe_allow_html=True)
-            
-        # Lógica adicional para obtener el valor de label para cada robot y humano
-        st.markdown('<div style="color:#00629b; font-size: 35px;">Information about each Robot</div>', unsafe_allow_html=True)
+        # Lógica adicional para obtener el valor de label para cada robot
+        st.markdown("<div class='main-title'>Information about each Robot</div>", unsafe_allow_html=True)
+        
         if 'node1' in data.columns and 'node2' in data.columns and 'label' in data.columns:
             # Filtrar los nombres de los robots
             robot_names = data[data['node2'] == 'Robot']['node1'].unique()
@@ -120,10 +270,18 @@ with tab2:
                     results.append((robot, label_value[0], label_value1[0]))
 
             if results:
-                results_data = pd.DataFrame(results, columns=['Robot', 'Label Value', 'name'])
-                st.dataframe(results_data)
+                st.markdown("<div class='card-container'>", unsafe_allow_html=True)
+                for robot, type_value, name_value in results:
+                    st.markdown(f"""
+                        <div class='card'>
+                            <div class='card-title'>{robot}</div>
+                            <div class='card-content'>Type: {type_value}</div>
+                            <div class='card-content'>Name: {name_value}</div>
+                        </div>
+                    """, unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
             else:
-                st.warning("No se encontraron valores para los robots especificados.")
+                st.warning("No values found for the specified robots.")
 
             if 'label' in data.columns and 'node1' in data.columns and 'node2' in data.columns:
                 
@@ -184,7 +342,7 @@ with tab2:
 
                     return result_data
 
-            st.markdown('<div style="color:#00629b; font-size: 35px;">Emotions resume for all robots</div>', unsafe_allow_html=True)
+            st.markdown ("# Emotions resume for all robots")
             st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;"> </div>', unsafe_allow_html=True)
 
             result_data = get_interactions_for_all_robots(data)
@@ -251,7 +409,7 @@ with tab2:
                 # Mostrar ambas gráficas una al lado de la otra con sus leyendas respectivas
                 col1, col2 = st.columns(2)
 
-                with col1:
+                with col1:            
                     st.markdown(robot_legend_html, unsafe_allow_html=True)
                     st.plotly_chart(fig_time)
 
@@ -266,14 +424,15 @@ with tab2:
                 robot_names = robots['node1'].unique()
 
                 
-                st.markdown('<div style="color:#00629b; font-size: 35px;">Statistics for each robot</div>', unsafe_allow_html=True)
+                st.markdown ("# Statistics for each robot")           
                 st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;">Select a robot</div>', unsafe_allow_html=True)
                 selected_robot = st.selectbox("", robot_names)
                 st.markdown('<div style="color:#00a9e0; font-size: 20px; text-align: left;"> </div>', unsafe_allow_html=True)
                 
                 interactions = data[data['node2'] == 'Action']
 
-                st.markdown(f'<div style="color:#00629b; font-size: 35px;">Interactions carried out by {selected_robot}:</div>', unsafe_allow_html=True)
+                
+                st.markdown (f"# Interactions carried out by {selected_robot}:")
                 
                 col1, col2 = st.columns([1, 1])
 
@@ -345,7 +504,8 @@ with tab2:
                     return result_data
                 
                 st.markdown('<div style="color:#00629b; font-size: 35px;"></div>', unsafe_allow_html=True)
-                st.markdown('<div style="color:#00629b; font-size: 35px;">Emotions for each robot</div>', unsafe_allow_html=True)
+                
+                st.markdown ("# Emotions for each robot")
                 st.markdown('<div style="color:#00629b; font-size: 35px;"></div>', unsafe_allow_html=True)
                                     
                 if selected_robot:
@@ -410,7 +570,7 @@ with tab2:
     else:
         st.warning("Please upload a CSV file in the 'Upload CSV' tab")
 
-with tab3:
+with tab4:
     st.markdown('<div style="color:#00629b; font-size: 35px;">Human Statistics</div>', unsafe_allow_html=True)
     if data is not None:
         if 'node1' in data.columns and 'node2' in data.columns:
