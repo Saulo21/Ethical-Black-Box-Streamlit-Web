@@ -140,49 +140,7 @@ with tab2:
     
     if data is not None:
         if 'node1' in data.columns and 'node2' in data.columns:
-            model_names = data[data['node2'] == 'MOdel']['node1'].unique()  
-            
-            results = []
-            for model in model_names:
-                label_value = data[(data['node1'] == model) & (data['label'] == 'type')]['node2'].values
-                label_value1 = data[(data['node1'] == model) & (data['label'] == 'label')]['node2'].values
-                if len(label_value) > 0:
-                    results.append((model, label_value[0], label_value1[0]))
-
-            if results:
-                st.markdown("<div class='card-container'>", unsafe_allow_html=True)
-                for model, type_value, name_value in results:
-                    st.markdown(f"""
-                        <div class='card'>
-                            <div class='card-title'>{model}</div>
-                            <div class='card-content'>Type: {type_value}</div>
-                            <div class='card-content'>Name: {name_value}</div>
-                        </div>
-                    """, unsafe_allow_html=True)
-                    
-                    # Obtener la información del experimento
-                    experiment_info = get_experiment_info(name_value)
-                    
-                    print("AAAAAAAHHHHHHHHH")
-                    print(experiment_info)
-                    print("bbbbbbbHHHHHHHHH")
-                    
-                    if experiment_info:
-                        experiment_details = experiment_info['experiment']
-                        st.markdown(f"""
-                            <div class='card'>
-                                <div class='card-title'>Experiment ID: {experiment_details['experiment_id']}</div>
-                                <div class='card-content'>Name: {experiment_details['name']}</div>
-                                <div class='card-content'>Artifact Location: {experiment_details['artifact_location']}</div>
-                                <div class='card-content'>Lifecycle Stage: {experiment_details['lifecycle_stage']}</div>
-                            </div>
-                        """, unsafe_allow_html=True)
-                    else:
-                        st.warning(f"Could not retrieve information for experiment ID {name_value}")
-                        
-                st.markdown("</div>", unsafe_allow_html=True)
-            else:
-                st.warning("No values found for the specified robots.")  
+            model_names = data[data['node2'] == 'MOdel']['node1'].unique()    
     else:
         st.warning("Por favor, sube un archivo de Jupyter Notebook en la pestaña 'Subir notebook'")
         
